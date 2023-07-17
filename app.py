@@ -39,7 +39,6 @@ def detectAnzie(img_path):
     for filename in os.listdir(directory):
         if os.path.isfile(os.path.join(directory, filename)):
           verify = DeepFace.verify(os.path.join(directory, filename), img2_path = img_path, distance_metric="euclidean_l2", enforce_detection=False)
-          print(verify)
           if verify["verified"] == True:
             return True
     return False

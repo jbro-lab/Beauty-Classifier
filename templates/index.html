@@ -560,25 +560,3 @@
     <script src="{{url_for('static',filename='js/scripts.js')}}"></script>
   </body>
 </html>
-
-<!-- <html>
-  <body>
-    {% if error %}
-    <p>{{ error }}</p>
-    {% endif %}
-
-    <form
-      action="{{ url_for('predict') }}"
-      method="POST"
-      enctype="multipart/form-data"
-    >
-      form fields
-      <input type="file" name="img" required="required" /><br />
-      <button type="submit">Rate Me</button>
-    </form>
-    {%if prediction%}
-    <p>Your score out of 10: {{ prediction[0] * 2 }}</p>
-    <p>Your percentile in our data set: {{ prediction[1] }}</p>
-    {% endif %}
-  </body>
-</html> -->
