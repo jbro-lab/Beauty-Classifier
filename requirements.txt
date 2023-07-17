@@ -6,6 +6,7 @@ cachetools
 certifi
 charset-normalizer
 click
+cv2
 deepface
 filelock
 fire
