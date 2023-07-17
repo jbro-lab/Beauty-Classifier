@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Looksmax</title>
+    <!-- Favicon-->
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{url_for('static',filename='assets/favicon.ico')}}"
+    />
+    <!-- Custom Google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap icons-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link
+      href="{{url_for('static',filename='css/styles.css')}}"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="d-flex flex-column h-100">
+    <main class="flex-shrink-0">
+      <!-- Navigation-->
+      <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+        <div class="container px-5">
+          <a class="navbar-brand" href="{{url_for('home')}}"
+            ><span class="fw-bolder text-primary">Looksmax</span></a
+          >
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+              <li class="nav-item">
+                <a class="nav-link" href="{{url_for('home')}}">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{url_for('resume')}}">Resume</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{url_for('celebrities')}}"
+                  >Celebrities</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{url_for('contact')}}">Contact</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- Header-->
+      <header class="py-5">
+        <div class="container px-5 pb-5">
+          <div class="row gx-5 align-items-center">
+            <div class="col-xxl-5">
+              <!-- Header text content-->
+              <div class="text-center text-xxl-start">
+                <div
+                  class="badge bg-gradient-primary-to-secondary text-white mb-4"
+                >
+                  <div class="text-uppercase">
+                    Snap &middot; Upload &middot; Rate
+                  </div>
+                </div>
+                <div class="fs-3 fw-light text-muted"></div>
+                <h1 class="display-3 fw-bolder mb-5">
+                  <span class="text-gradient d-inline"
+                    >How attractive are you?</span
+                  >
+                </h1>
+                <div class="">
+                  <form
+                    action="{{ url_for('predict') }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="form-floating mb-3"
+                  >
+                    <input
+                      type="file"
+                      id="img"
+                      name="img"
+                      required="required"
+                    /><br />
+                    <br />
+                    <button class="btn btn-primary btn-lg" type="submit">
+                      Rate Me
+                    </button>
+                  </form>
+                  {% if error %}
+                  <p class="text-warning">{{ error }}</p>
+                  {% endif %} {%if prediction%}
+                  <h3 class="display-6 fw-bolder">
+                    <span class="fs-3 fw-light text-muted">Your score: </span>
+                    <span class="text-gradient d-inline"
+                      >{{ prediction[0] }}/10</span
+                    >
+                  </h3>
+                  <h3 class="display-6 fw-bolder">
+                    <span class="fs-3 fw-light text-muted"
+                      >Your percentile:
+                    </span>
+                    <span class="text-gradient d-inline"
+                      >{{ prediction[1] }}%</span
+                    >
+                  </h3>
+                  {%else%}
+                  <p class="text-muted">
+                    Tip: crop your photo so that it includes your face almost
+                    exclusively. See Henry Cavill's picture on your right. Does
+                    not support HEIC or HEIF at the moment
+                  </p>
+                  {% endif %} {%if anzie%}
+                  <h3 class="display-6 fw-bolder mb-5">
+                    <span class="text-gradient d-inline"
+                      >Anzie is the most beautiful woman in the whole
+                      world!</span
+                    >
+                  </h3>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col-xxl-7">
+              <!-- Header profile picture-->
+              <div class="d-flex justify-content-center mt-5 mt-xxl-0">
+                <div class="profile bg-gradient-primary-to-secondary">
+                  <!-- TIP: For best results, use a photo with a transparent background like the demo example below-->
+                  <!-- Watch a tutorial on how to do this on YouTube (link)-->
+                  {% if filePath%}
+                  <img
+                    class="profile-img"
+                    src="{{url_for('photos',filename=filePath)}}"
+                    alt="..."
+                  />
+                  {% else %}
+                  <img
+                    class="profile-img"
+                    src="{{url_for('static',filename='assets/henry_cavill2.png')}}"
+                    alt="..."
+                  />
+                  {% endif %}
+                  <div class="dots-1">
+                    <!-- SVG Dots-->
+                    <svg
+                      version="1.1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                      x="0px"
+                      y="0px"
+                      viewBox="0 0 191.6 1215.4"
+                      style="enable-background: new 0 0 191.6 1215.4"
+                      xml:space="preserve"
+                    >
+                      <g
+                        transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
+                      >
+                        <path
+                          d="M227.7,12788.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,12801.6,289.7,12808.6,227.7,12788.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,12788.6c-151-50-253-216-222-362c25-119,136-230,254-255c194-41,395,142,375,339c-11,105-90,213-190,262        C1663.7,12801.6,1569.7,12808.6,1507.7,12788.6z"
+                        ></path>
+                        <path
+                          d="M227.7,11508.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,11521.6,289.7,11528.6,227.7,11508.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,11508.6c-151-50-253-216-222-362c25-119,136-230,254-255c194-41,395,142,375,339c-11,105-90,213-190,262        C1663.7,11521.6,1569.7,11528.6,1507.7,11508.6z"
+                        ></path>
+                        <path
+                          d="M227.7,10228.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,10241.6,289.7,10248.6,227.7,10228.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,10228.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,10241.6,1569.7,10248.6,1507.7,10228.6z"
+                        ></path>
+                        <path
+                          d="M227.7,8948.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,8961.6,289.7,8968.6,227.7,8948.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,8948.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,8961.6,1569.7,8968.6,1507.7,8948.6z"
+                        ></path>
+                        <path
+                          d="M227.7,7668.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,7681.6,289.7,7688.6,227.7,7668.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,7668.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,7681.6,1569.7,7688.6,1507.7,7668.6z"
+                        ></path>
+                        <path
+                          d="M227.7,6388.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,6401.6,289.7,6408.6,227.7,6388.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,6388.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,6401.6,1569.7,6408.6,1507.7,6388.6z"
+                        ></path>
+                        <path
+                          d="M227.7,5108.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,5121.6,289.7,5128.6,227.7,5108.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,5108.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,5121.6,1569.7,5128.6,1507.7,5108.6z"
+                        ></path>
+                        <path
+                          d="M227.7,3828.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,3841.6,289.7,3848.6,227.7,3828.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,3828.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,3841.6,1569.7,3848.6,1507.7,3828.6z"
+                        ></path>
+                        <path
+                          d="M227.7,2548.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,2561.6,289.7,2568.6,227.7,2548.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,2548.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,2561.6,1569.7,2568.6,1507.7,2548.6z"
+                        ></path>
+                        <path
+                          d="M227.7,1268.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,1281.6,289.7,1288.6,227.7,1268.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,1268.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,1281.6,1569.7,1288.6,1507.7,1268.6z"
+                        ></path>
+                      </g>
+                    </svg>
+                    <!-- END of SVG dots-->
+                  </div>
+                  <div class="dots-2">
+                    <!-- SVG Dots-->
+                    <svg
+                      version="1.1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                      x="0px"
+                      y="0px"
+                      viewBox="0 0 191.6 1215.4"
+                      style="enable-background: new 0 0 191.6 1215.4"
+                      xml:space="preserve"
+                    >
+                      <g
+                        transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
+                      >
+                        <path
+                          d="M227.7,12788.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,12801.6,289.7,12808.6,227.7,12788.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,12788.6c-151-50-253-216-222-362c25-119,136-230,254-255c194-41,395,142,375,339c-11,105-90,213-190,262        C1663.7,12801.6,1569.7,12808.6,1507.7,12788.6z"
+                        ></path>
+                        <path
+                          d="M227.7,11508.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,11521.6,289.7,11528.6,227.7,11508.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,11508.6c-151-50-253-216-222-362c25-119,136-230,254-255c194-41,395,142,375,339c-11,105-90,213-190,262        C1663.7,11521.6,1569.7,11528.6,1507.7,11508.6z"
+                        ></path>
+                        <path
+                          d="M227.7,10228.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,10241.6,289.7,10248.6,227.7,10228.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,10228.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,10241.6,1569.7,10248.6,1507.7,10228.6z"
+                        ></path>
+                        <path
+                          d="M227.7,8948.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,8961.6,289.7,8968.6,227.7,8948.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,8948.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,8961.6,1569.7,8968.6,1507.7,8948.6z"
+                        ></path>
+                        <path
+                          d="M227.7,7668.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,7681.6,289.7,7688.6,227.7,7668.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,7668.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,7681.6,1569.7,7688.6,1507.7,7668.6z"
+                        ></path>
+                        <path
+                          d="M227.7,6388.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,6401.6,289.7,6408.6,227.7,6388.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,6388.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,6401.6,1569.7,6408.6,1507.7,6388.6z"
+                        ></path>
+                        <path
+                          d="M227.7,5108.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,5121.6,289.7,5128.6,227.7,5108.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,5108.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,5121.6,1569.7,5128.6,1507.7,5108.6z"
+                        ></path>
+                        <path
+                          d="M227.7,3828.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,3841.6,289.7,3848.6,227.7,3828.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,3828.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,3841.6,1569.7,3848.6,1507.7,3828.6z"
+                        ></path>
+                        <path
+                          d="M227.7,2548.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,2561.6,289.7,2568.6,227.7,2548.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,2548.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,2561.6,1569.7,2568.6,1507.7,2548.6z"
+                        ></path>
+                        <path
+                          d="M227.7,1268.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,1281.6,289.7,1288.6,227.7,1268.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,1268.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,1281.6,1569.7,1288.6,1507.7,1268.6z"
+                        ></path>
+                      </g>
+                    </svg>
+                    <!-- END of SVG dots-->
+                  </div>
+                  <div class="dots-3">
+                    <!-- SVG Dots-->
+                    <svg
+                      version="1.1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                      x="0px"
+                      y="0px"
+                      viewBox="0 0 191.6 1215.4"
+                      style="enable-background: new 0 0 191.6 1215.4"
+                      xml:space="preserve"
+                    >
+                      <g
+                        transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
+                      >
+                        <path
+                          d="M227.7,12788.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,12801.6,289.7,12808.6,227.7,12788.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,12788.6c-151-50-253-216-222-362c25-119,136-230,254-255c194-41,395,142,375,339c-11,105-90,213-190,262        C1663.7,12801.6,1569.7,12808.6,1507.7,12788.6z"
+                        ></path>
+                        <path
+                          d="M227.7,11508.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,11521.6,289.7,11528.6,227.7,11508.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,11508.6c-151-50-253-216-222-362c25-119,136-230,254-255c194-41,395,142,375,339c-11,105-90,213-190,262        C1663.7,11521.6,1569.7,11528.6,1507.7,11508.6z"
+                        ></path>
+                        <path
+                          d="M227.7,10228.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,10241.6,289.7,10248.6,227.7,10228.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,10228.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,10241.6,1569.7,10248.6,1507.7,10228.6z"
+                        ></path>
+                        <path
+                          d="M227.7,8948.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,8961.6,289.7,8968.6,227.7,8948.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,8948.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,8961.6,1569.7,8968.6,1507.7,8948.6z"
+                        ></path>
+                        <path
+                          d="M227.7,7668.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,7681.6,289.7,7688.6,227.7,7668.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,7668.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,7681.6,1569.7,7688.6,1507.7,7668.6z"
+                        ></path>
+                        <path
+                          d="M227.7,6388.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,6401.6,289.7,6408.6,227.7,6388.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,6388.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,6401.6,1569.7,6408.6,1507.7,6388.6z"
+                        ></path>
+                        <path
+                          d="M227.7,5108.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,5121.6,289.7,5128.6,227.7,5108.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,5108.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,5121.6,1569.7,5128.6,1507.7,5108.6z"
+                        ></path>
+                        <path
+                          d="M227.7,3828.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,3841.6,289.7,3848.6,227.7,3828.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,3828.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,3841.6,1569.7,3848.6,1507.7,3828.6z"
+                        ></path>
+                        <path
+                          d="M227.7,2548.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,2561.6,289.7,2568.6,227.7,2548.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,2548.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,2561.6,1569.7,2568.6,1507.7,2548.6z"
+                        ></path>
+                        <path
+                          d="M227.7,1268.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,1281.6,289.7,1288.6,227.7,1268.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,1268.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,1281.6,1569.7,1288.6,1507.7,1268.6z"
+                        ></path>
+                      </g>
+                    </svg>
+                    <!-- END of SVG dots-->
+                  </div>
+                  <div class="dots-4">
+                    <!-- SVG Dots-->
+                    <svg
+                      version="1.1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                      x="0px"
+                      y="0px"
+                      viewBox="0 0 191.6 1215.4"
+                      style="enable-background: new 0 0 191.6 1215.4"
+                      xml:space="preserve"
+                    >
+                      <g
+                        transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
+                      >
+                        <path
+                          d="M227.7,12788.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,12801.6,289.7,12808.6,227.7,12788.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,12788.6c-151-50-253-216-222-362c25-119,136-230,254-255c194-41,395,142,375,339c-11,105-90,213-190,262        C1663.7,12801.6,1569.7,12808.6,1507.7,12788.6z"
+                        ></path>
+                        <path
+                          d="M227.7,11508.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,11521.6,289.7,11528.6,227.7,11508.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,11508.6c-151-50-253-216-222-362c25-119,136-230,254-255c194-41,395,142,375,339c-11,105-90,213-190,262        C1663.7,11521.6,1569.7,11528.6,1507.7,11508.6z"
+                        ></path>
+                        <path
+                          d="M227.7,10228.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,10241.6,289.7,10248.6,227.7,10228.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,10228.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,10241.6,1569.7,10248.6,1507.7,10228.6z"
+                        ></path>
+                        <path
+                          d="M227.7,8948.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,8961.6,289.7,8968.6,227.7,8948.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,8948.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,8961.6,1569.7,8968.6,1507.7,8948.6z"
+                        ></path>
+                        <path
+                          d="M227.7,7668.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,7681.6,289.7,7688.6,227.7,7668.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,7668.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,7681.6,1569.7,7688.6,1507.7,7668.6z"
+                        ></path>
+                        <path
+                          d="M227.7,6388.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,6401.6,289.7,6408.6,227.7,6388.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,6388.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,6401.6,1569.7,6408.6,1507.7,6388.6z"
+                        ></path>
+                        <path
+                          d="M227.7,5108.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,5121.6,289.7,5128.6,227.7,5108.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,5108.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,5121.6,1569.7,5128.6,1507.7,5108.6z"
+                        ></path>
+                        <path
+                          d="M227.7,3828.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,3841.6,289.7,3848.6,227.7,3828.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,3828.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,3841.6,1569.7,3848.6,1507.7,3828.6z"
+                        ></path>
+                        <path
+                          d="M227.7,2548.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,2561.6,289.7,2568.6,227.7,2548.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,2548.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,2561.6,1569.7,2568.6,1507.7,2548.6z"
+                        ></path>
+                        <path
+                          d="M227.7,1268.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C383.7,1281.6,289.7,1288.6,227.7,1268.6z"
+                        ></path>
+                        <path
+                          d="M1507.7,1268.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262        C1663.7,1281.6,1569.7,1288.6,1507.7,1268.6z"
+                        ></path>
+                      </g>
+                    </svg>
+                    <!-- END of SVG dots-->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <!-- About Section-->
+      <section class="bg-light py-5">
+        <div class="container px-5">
+          <div class="row gx-5 justify-content-center">
+            <div class="col-xxl-8">
+              <div class="text-center my-5">
+                <h2 class="display-5 fw-bolder">
+                  <span class="text-gradient d-inline">About Looksmax</span>
+                </h2>
+                <p class="lead fw-light mb-4">
+                  Beauty in the Eye of a Computer
+                </p>
+                <p class="text-muted">
+                  This website is made possible by
+                  <a href="https://github.com/gustavz">Gustav von Zitzewitz</a>
+                  ,
+                  <a
+                    href="https://github.com/HCIILAB/SCUT-FBP5500-Database-Release"
+                    >Human Computer Intelligent Interaction Lab of South China
+                    University of Technology</a
+                  >, and
+                  <a href="https://pypi.org/project/deepface/">DeepFace</a>.
+                  Keep in mind that this computer model cannot determine other
+                  attractiveness characteristics like personality, body type,
+                  and charisma. This computer model can only determine facial
+                  attractiveness. As far as I'm concerned, everyone who uses
+                  this is stunningly beautiful or dashingly handsome. The model
+                  appears to be harsher towards men. Your picture will be stored
+                  without any identifying information for future research
+                  purposes and to improve the model. The model will work best on
+                  those of primarily European or East Asian descent for now. If
+                  you like this go ahead and give me a star on Github (and
+                  Gustav, SCUT, and DeepFace as well)!
+                </p>
+                <div class="d-flex justify-content-center fs-2 gap-4">
+                  <a
+                    class="text-gradient"
+                    href="https://www.linkedin.com/in/justis-brown"
+                    ><i class="bi bi-linkedin"></i
+                  ></a>
+                  <a class="text-gradient" href="https://github.com/jbro-lab"
+                    ><i class="bi bi-github"></i
+                  ></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Footer-->
+    <footer class="bg-white py-4 mt-auto">
+      <div class="container px-5">
+        <div
+          class="row align-items-center justify-content-between flex-column flex-sm-row"
+        >
+          <div class="col-auto">
+            <div class="small m-0">Copyright &copy; Looksmax 2023</div>
+          </div>
+          <!-- <div class="col-auto">
+            <a class="small" href="#!">Privacy</a>
+            <span class="mx-1">&middot;</span>
+            <a class="small" href="#!">Terms</a>
+            <span class="mx-1">&middot;</span>
+            <a class="small" href="#!">Contact</a>
+          </div> -->
+        </div>
+      </div>
+    </footer>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="{{url_for('static',filename='js/scripts.js')}}"></script>
+  </body>
+</html>
+
+<!-- <html>
+  <body>
+    {% if error %}
+    <p>{{ error }}</p>
+    {% endif %}
+
+    <form
+      action="{{ url_for('predict') }}"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      form fields
+      <input type="file" name="img" required="required" /><br />
+      <button type="submit">Rate Me</button>
+    </form>
+    {%if prediction%}
+    <p>Your score out of 10: {{ prediction[0] * 2 }}</p>
+    <p>Your percentile in our data set: {{ prediction[1] }}</p>
+    {% endif %}
+  </body>
+</html> -->
