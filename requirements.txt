@@ -9,7 +9,7 @@ click
 deepface
 filelock
 fire
-Flask
+flask
 flatbuffers
 gast
 gdown
