@@ -13,16 +13,19 @@ from werkzeug.utils import secure_filename
 key = os.urandom(24)
 b'key'
 
-UPLOAD_FOLDER = './photos'
+PATH = os.getcwd() + '/mysite' if 'jbrolab' in os.getcwd() else os.getcwd()
+
+
+UPLOAD_FOLDER = PATH +'/photos'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 app = Flask(__name__)
 app.secret_key = '_your_random_secret_key_here_'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-model = models.load_model('./models/attractiveNet_mnv2.h5')
+model = models.load_model(PATH + '/models/attractiveNet_mnv2.h5')
 
-df = pd.read_csv('data/All_Ratings.csv')
+df = pd.read_csv(PATH + '/data/All_Ratings.csv')
 all_images = defaultdict(list)
 for filename, rating in df[['Filename', 'Rating']].values:
     all_images[filename].append(rating)
@@ -35,7 +38,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def detectAnzie(img_path):
-    directory = './photos/anzie'
+    directory = PATH + '/photos/anzie'
     for filename in os.listdir(directory):
         if os.path.isfile(os.path.join(directory, filename)):
           verify = DeepFace.verify(os.path.join(directory, filename), img2_path = img_path, distance_metric="euclidean_l2", enforce_detection=False)
