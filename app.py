@@ -73,6 +73,7 @@ def predict():
                 return render_template('index.html', error=error_message)
             
             file = request.files['img']
+            print('file: ', file)
             # if user does not select file, browser also
             # submit an empty part without a filename
             if file.filename == '':
@@ -82,17 +83,25 @@ def predict():
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file_path = os.path.join(UPLOAD_FOLDER, filename)
+                print('file_path: ', file_path)
                 file.save(file_path)
                 try:
                     img = DeepFace.extract_faces(img_path = file_path)
                     if len(img) > 1:
                         error_message = 'More than one face detected'
                         return render_template('index.html', error=error_message)
+                    img = img[0]['face'].astype(np.float64)
                     isAnzie = detectAnzie(file_path)
+                    files_list = os.listdir(UPLOAD_FOLDER)
+                    num_files = len(files_list)
+                    new_img_file = image.array_to_img(img)
+                    new_img_file.save(os.path.join(UPLOAD_FOLDER, f'img-{num_files + 1}.png'))
                     if not isAnzie:
                         img = image.load_img(file_path)
-                        img = image.img_to_array(img) 
+                        img = image.img_to_array(img)
+                        os.remove(file_path)
                         prediction = model.predict(img.reshape((1,) + img.shape))
+                        print(prediction)
                         rating = round(prediction[0][0] * 2,2)
                         percentile = round(stats.percentileofscore(ys, prediction[0][0]),2)
                         result = (rating, percentile)
@@ -102,7 +111,8 @@ def predict():
                         percentile = stats.percentileofscore(ys, 10)
                         result = (rating, percentile)
                         return render_template('index.html', prediction=result, anzie=True)
-                except:
+                except Exception as e:
+                    print("error:   ", e)
                     error_message = 'No face detected'
                     return render_template('index.html', error=error_message)
     except:
